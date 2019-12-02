@@ -4,11 +4,16 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.google.android.gms.common.internal.constants.ListAppsActivityContract;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -30,15 +35,18 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.Random;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
     public static MapsActivity itself = null;
-    private StartMenu StartMenuFragment;
     private HelpPage HelpPageFragment;
     private LatLng userCurrentLoc;
     private GoogleMap mMap;
     private static final int LAT_INDICATOR = 0123;
     private static final int LNG_INDICATOR = 0456;
+//    private List
+    private static int index;
+
 
     private static final int PATTERN_DASH_LENGTH_PX = 20;
     private static final int PATTERN_GAP_LENGTH_PX = 20;
@@ -53,6 +61,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
+        HelpPageFragment = new HelpPage();
         mapFragment.getMapAsync(this);
         itself = this;
 
@@ -82,24 +91,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     /**
-     * This showOriginalPost function, it sets up the Fragment which include a title, EditText,
+     * This setupHelpFragments function, it sets up the Fragment which include a title, EditText,
      * search button, and a ListView to use to display the search results and allow users to search.
      * It accepts and return nothing.
      */
-    private void setupFragments() {
+    public void setupHelpFragments(View buttonView) {
         FragmentTransaction transaction =
                 getSupportFragmentManager().beginTransaction();
 
-        StartMenuFragment = new StartMenu();
-        HelpPageFragment = new HelpPage();
-
-        StartMenuFragment.setContainerActivity(this);
         HelpPageFragment.setContainerActivity(this);
+        System.out.println("Before transition");
         transaction.replace(R.id.fragment_container,
-                StartMenuFragment);
+                HelpPageFragment);
 
         transaction.addToBackStack(null);
         transaction.commit();
+
+        System.out.println("After transition");
+
     }
 
     public void updateLocation(View v) {
@@ -108,6 +117,45 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         new DownloadTask().execute(currentCameraPosition.target.latitude + "," + currentCameraPosition.target.longitude);
     }
 
+
+    public void backToMenu(View button){
+        HelpPageFragment.backToMenu(button);
+    }
+
+
+    public void updateBlock(View bv){
+        boolean isNext = false;
+        if(bv.getId()==R.id.next_help_button) {
+            isNext = true;
+            if(index == 3)
+                index = 3;
+            else
+                index++;
+        } else if (bv.getId()==R.id.prev_help_button){
+            if(index == 1)
+                index = 1;
+            else
+              index--;
+        }
+
+        //HelpPageFragment.setNextBlock(bv);
+        ImageView img= (ImageView)findViewById(R.id.help_image);
+
+        //ImageView imageView = new ImageView(this);
+        System.out.println("Index: " + index);
+        Bitmap bImage = null;
+        if(index == 1) {
+            bImage = BitmapFactory.decodeResource(this.getResources(), R.drawable.instruction_1);
+        }else if(index == 2) {
+            bImage = BitmapFactory.decodeResource(this.getResources(), R.drawable.instruction_2);
+            img.setImageResource(R.drawable.instruction_2);
+        }else if(index == 3) {
+            // img.setImageResource(R.drawable.instruction_3);
+            bImage = BitmapFactory.decodeResource(this.getResources(), R.drawable.instruction_3);
+        }
+        img.setImageBitmap(bImage);
+
+    }
 
     private class DownloadTask extends AsyncTask<String, Void, JSONObject> {
 
@@ -161,11 +209,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     Marker m = mMap.addMarker(new MarkerOptions().position(location).title(label));
                     m.setVisible(true);
                 }
+
+                int dynamicPopulation = new Random().nextInt(100) + 10;
+                TextView popTV = (TextView)findViewById(R.id.populationView);
+                popTV.setText("Current Population: " + dynamicPopulation);
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
         }
-    }
+
+     }
 
 }

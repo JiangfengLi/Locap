@@ -6,7 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/times_square"
-    android:id="@+id/fragment_container"
     tools:context=".MapsActivity"
     >
 
@@ -14,8 +13,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        tools:context=".StartMenu"
-        android:id="@+id/fragment_search_outer_layout1"
+        tools:context=".MapsActivity"
+        android:id="@+id/fragment_container"
         android:background="#ddffffff"
         >
         <!-- TODO: Update blank fragment layout -->
@@ -32,7 +31,7 @@
                 android:layout_height="100dp"
                 android:layout_weight="2"
                 android:layout_margin="5dp"
-                android:textColor="@color/textColor"
+                android:textColor="@color/inputTextColor"
                 android:textSize="40dp"
                 android:backgroundTint="@color/editTextColor"
                 android:id="@+id/search_key"
@@ -48,7 +47,6 @@
                 android:text="SEARCH"
                 android:textColor="@color/textColor"
                 android:textSize="30dp"
-                tools:context=".SearchFragment"
                 android:id="@+id/search_button"
                 android:onClick="updateLocation"></Button>
         </LinearLayout>
@@ -66,10 +64,11 @@
                 android:layout_margin="5dp"
                 android:layout_weight="1"
                 android:background="@drawable/rounded_button2"
-                android:text="?"
                 android:textColor="@color/buttonTextColor"
                 android:textSize="50dp"
-                android:id="@+id/help_button"></Button>
+                android:text="?"
+                android:id="@+id/help_button"
+                android:onClick="setupHelpFragments"></Button>
 
             <ImageView
                 android:layout_width="50dp"
@@ -106,21 +105,32 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="100dp"
-            android:fontFamily="casual"
+            android:fontFamily="cursive"
             android:text=""
             android:textAlignment="center"
             android:textColor="@color/titleColor"
-            android:textSize="50dp"
+            android:textSize="30dp"
             android:textStyle="bold"
             android:id="@+id/populationView"/>
         />
 
-        <fragment
-            android:id="@+id/map"
-            android:name="com.google.android.gms.maps.SupportMapFragment"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context=".MapsActivity" />
+            android:orientation="vertical"
+            android:id="@+id/map_linear_layout"
+            android:background="@drawable/map_border"
+            >
+            <fragment
+                android:id="@+id/map"
+                android:name="com.google.android.gms.maps.SupportMapFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:context=".MapsActivity"
+                android:background="@drawable/map_border"
+                android:layout_margin="5dp"
+                />
+        </LinearLayout>
 
     </LinearLayout>
 
