@@ -3,6 +3,8 @@ package com.example.locap;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -124,14 +126,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
     public void updateBlock(View bv){
-        boolean isNext = false;
+        float setPos = 0;
         if(bv.getId()==R.id.next_help_button) {
-            isNext = true;
+            setPos = 300f;
             if(index == 3)
                 index = 3;
             else
                 index++;
         } else if (bv.getId()==R.id.prev_help_button){
+            setPos = -300f;
             if(index == 1)
                 index = 1;
             else
@@ -148,12 +151,27 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             bImage = BitmapFactory.decodeResource(this.getResources(), R.drawable.instruction_1);
         }else if(index == 2) {
             bImage = BitmapFactory.decodeResource(this.getResources(), R.drawable.instruction_2);
-            img.setImageResource(R.drawable.instruction_2);
         }else if(index == 3) {
             // img.setImageResource(R.drawable.instruction_3);
             bImage = BitmapFactory.decodeResource(this.getResources(), R.drawable.instruction_3);
         }
+
+        //set up animation
+        ObjectAnimator animatorX = ObjectAnimator.ofFloat(img, "x", 0f);
+        animatorX.setDuration(1000);
+
+        ObjectAnimator alphaAnimation = ObjectAnimator.ofFloat(img, View.ALPHA,1.0f,0.0f);
+        ObjectAnimator alphaAnimation2 = ObjectAnimator.ofFloat(img, View.ALPHA,0.0f,1.0f);
+        alphaAnimation.setDuration(1000);
+        alphaAnimation2.setDuration(1000);
+        AnimatorSet animatorSet = new AnimatorSet();
+        animatorSet.playTogether(alphaAnimation, animatorX);
         img.setImageBitmap(bImage);
+        img.setX(setPos);
+        animatorSet.playTogether(alphaAnimation2);
+        animatorSet.start();
+
+        //img.setAlpha(1.0f);
 
     }
 
