@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".HelpPage"
+    android:background="@drawable/times_square"
+    android:id="@+id/helpPage_FramLayout">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context=".StartMenu"
+        android:id="@+id/fragment_help_outer_layout1"
+        android:background="#ddffffff"
+        >
+    </LinearLayout>
+
+</FrameLayout>

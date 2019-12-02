@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Locap</string>
+    <string name="title_activity_maps">Map</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="Star_Menu_title">Where do you wanna go?</string>
+
+    <string name="Star_Menu_hint">Where to go?</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="map_button_text">See in map</string>
+
+</resources>
