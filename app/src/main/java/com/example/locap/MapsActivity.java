@@ -37,6 +37,8 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
@@ -46,7 +48,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     private static final int LAT_INDICATOR = 0123;
     private static final int LNG_INDICATOR = 0456;
-//    private List
+    private List<String> Favorlist;
     private static int index;
 
 
@@ -66,7 +68,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         HelpPageFragment = new HelpPage();
         mapFragment.getMapAsync(this);
         itself = this;
-
+        Favorlist = new ArrayList<String>();
     }
 
 
@@ -129,8 +131,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         float setPos = 0;
         if(bv.getId()==R.id.next_help_button) {
             setPos = 300f;
-            if(index == 3)
-                index = 3;
+            if(index == 7)
+                index = 7;
             else
                 index++;
         } else if (bv.getId()==R.id.prev_help_button){
@@ -154,6 +156,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }else if(index == 3) {
             // img.setImageResource(R.drawable.instruction_3);
             bImage = BitmapFactory.decodeResource(this.getResources(), R.drawable.instruction_3);
+        } else if(index == 4) {
+            // img.setImageResource(R.drawable.instruction_3);
+            bImage = BitmapFactory.decodeResource(this.getResources(), R.drawable.instruction_4);
+        }else if(index == 5) {
+            // img.setImageResource(R.drawable.instruction_3);
+            bImage = BitmapFactory.decodeResource(this.getResources(), R.drawable.instruction_5);
+        }else if(index == 6) {
+            // img.setImageResource(R.drawable.instruction_3);
+            bImage = BitmapFactory.decodeResource(this.getResources(), R.drawable.instruction_6);
+        }else if(index == 7) {
+            // img.setImageResource(R.drawable.instruction_3);
+            bImage = BitmapFactory.decodeResource(this.getResources(), R.drawable.instruction_7);
         }
 
         //set up animation
