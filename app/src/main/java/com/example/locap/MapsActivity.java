@@ -128,14 +128,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
     public void updateBlock(View bv){
-        boolean isNext = false;
+        float setPos = 0;
         if(bv.getId()==R.id.next_help_button) {
-            isNext = true;
+            setPos = 300f;
             if(index == 7)
                 index = 7;
             else
                 index++;
         } else if (bv.getId()==R.id.prev_help_button){
+            setPos = -300f;
             if(index == 1)
                 index = 1;
             else
@@ -152,7 +153,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             bImage = BitmapFactory.decodeResource(this.getResources(), R.drawable.instruction_1);
         }else if(index == 2) {
             bImage = BitmapFactory.decodeResource(this.getResources(), R.drawable.instruction_2);
-            img.setImageResource(R.drawable.instruction_2);
         }else if(index == 3) {
             // img.setImageResource(R.drawable.instruction_3);
             bImage = BitmapFactory.decodeResource(this.getResources(), R.drawable.instruction_3);
@@ -169,24 +169,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             // img.setImageResource(R.drawable.instruction_3);
             bImage = BitmapFactory.decodeResource(this.getResources(), R.drawable.instruction_7);
         }
-        ObjectAnimator transitionX_1 = ObjectAnimator.ofFloat(img, "x", -300f);
-        ObjectAnimator transitionX_2 = ObjectAnimator.ofFloat(img, "x", 0f);
-        ObjectAnimator alphaAnimation1 = ObjectAnimator.ofFloat(img, View.ALPHA, 1.0f,
-                0.0f);
-        ObjectAnimator alphaAnimation2 = ObjectAnimator.ofFloat(img, View.ALPHA, 0.0f,
-                1.0f);
-        transitionX_1.setDuration(1000);
-        transitionX_2.setDuration(1000);
-        alphaAnimation1.setDuration(1000);
-        alphaAnimation2.setDuration(1000);
 
+        //set up animation
+        ObjectAnimator animatorX = ObjectAnimator.ofFloat(img, "x", 0f);
+        animatorX.setDuration(1000);
+
+        ObjectAnimator alphaAnimation = ObjectAnimator.ofFloat(img, View.ALPHA,1.0f,0.0f);
+        ObjectAnimator alphaAnimation2 = ObjectAnimator.ofFloat(img, View.ALPHA,0.0f,1.0f);
+        alphaAnimation.setDuration(1000);
+        alphaAnimation2.setDuration(1000);
         AnimatorSet animatorSet = new AnimatorSet();
-        img.setX(0f);
-        animatorSet.playTogether(transitionX_1, alphaAnimation1);
+        animatorSet.playTogether(alphaAnimation, animatorX);
         img.setImageBitmap(bImage);
-        img.setX(300f);
-        animatorSet.playTogether(transitionX_2, alphaAnimation2);
+        img.setX(setPos);
+        animatorSet.playTogether(alphaAnimation2);
         animatorSet.start();
+
+        //img.setAlpha(1.0f);
+
     }
 
     private class DownloadTask extends AsyncTask<String, Void, JSONObject> {
