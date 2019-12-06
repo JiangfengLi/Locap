@@ -16,13 +16,13 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FavoritPlacesList extends Fragment {
+public class FavoritePlacesList extends Fragment {
     private MapsActivity mainActivity;
     private View fragV;
     private static String selectedPlace;
     private List<String> Favorlist;
 
-    public FavoritPlacesList() {
+    public FavoritePlacesList() {
         // Required empty public constructor
     }
 
@@ -34,8 +34,8 @@ public class FavoritPlacesList extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        fragV = inflater.inflate(R.layout.fragment_favorit_places_list, container, false);
-        mainActivity.setContentView(R.layout.fragment_favorit_places_list);
+        fragV = inflater.inflate(R.layout.fragment_favorite_places_list, container, false);
+        mainActivity.setContentView(R.layout.fragment_favorite_places_list);
         return fragV;
     }
 

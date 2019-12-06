@@ -6,8 +6,6 @@ import androidx.fragment.app.FragmentTransaction;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
-import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -18,7 +16,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.android.gms.common.internal.constants.ListAppsActivityContract;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -30,8 +27,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PatternItem;
-import com.google.android.gms.maps.model.Polygon;
-import com.google.android.gms.maps.model.PolygonOptions;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -40,7 +35,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
@@ -50,7 +44,7 @@ import java.util.Random;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
     public static MapsActivity itself = null;
     private HelpPage HelpPageFragment;
-    private FavoritPlacesList FPListFragment;
+    private FavoritePlacesList FPListFragment;
     private LatLng userCurrentLoc;
     private GoogleMap mMap;
 
@@ -148,21 +142,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     /**
-     * Set up FavoritPlacesList fragment
+     * Set up FavoritePlacesList fragment
      * @param iv
      */
     public void listFavor(View iv){
         FragmentTransaction transaction =
                 getSupportFragmentManager().beginTransaction();
 
-        FPListFragment = new FavoritPlacesList();
+        FPListFragment = new FavoritePlacesList();
         FPListFragment.setContainerActivity(this);
         //System.out.println("Before transition");
         transaction.replace(R.id.fragment_container, FPListFragment);
         transaction.addToBackStack(null);
         transaction.commit();
 
-        currentFrag = "FavoritPlacesList";
+        currentFrag = "FavoritePlacesList";
     }
 
     public void updateLocation(View v) {
@@ -178,7 +172,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void backToMenu(View button){
         if(currentFrag.equals("HelpFragments"))
             HelpPageFragment.backToMenu(button);
-        else if(currentFrag.equals("FavoritPlacesList"))
+        else if(currentFrag.equals("FavoritePlacesList"))
             FPListFragment.backToMenu(button);
     }
 
