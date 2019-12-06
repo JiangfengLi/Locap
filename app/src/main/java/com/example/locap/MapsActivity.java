@@ -5,12 +5,15 @@ import androidx.fragment.app.FragmentTransaction;
 
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -34,6 +37,9 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -44,16 +50,21 @@ import java.util.Random;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
     public static MapsActivity itself = null;
     private HelpPage HelpPageFragment;
+    private FavoritPlacesList FPListFragment;
     private LatLng userCurrentLoc;
     private GoogleMap mMap;
+
     private static final int LAT_INDICATOR = 0123;
     private static final int LNG_INDICATOR = 0456;
+    private static String currentFrag = "";
     private List<String> Favorlist;
     private static int index;
-
-
+    private static boolean isLike = false;
+    private String locationName = "";
     private static final int PATTERN_DASH_LENGTH_PX = 20;
     private static final int PATTERN_GAP_LENGTH_PX = 20;
+    private String FavorLocsFileName = "FavorLocs_file.txt";
+
     private static final PatternItem DASH = new Dash(PATTERN_DASH_LENGTH_PX);
     private static final PatternItem GAP = new Gap(PATTERN_GAP_LENGTH_PX);
 
@@ -69,8 +80,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
         itself = this;
         Favorlist = new ArrayList<String>();
+        createLocsFileIfNotExists();
+        populateFavors();
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        populateFavors();
+        System.out.println("onRestart Favorlist: \n" + Favorlist);
+    }
 
     /**
      * Manipulates the map once available.
@@ -94,25 +113,56 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
        // setupFragments();
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        saveFavorLocationsFile();
+        System.out.println("onPause Favorlist: \n" + Favorlist);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        saveFavorLocationsFile();
+        System.out.println("onDestroy Favorlist: \n" + Favorlist);
+    }
+
     /**
      * This setupHelpFragments function, it sets up the Fragment which include a title, EditText,
      * search button, and a ListView to use to display the search results and allow users to search.
      * It accepts and return nothing.
      */
     public void setupHelpFragments(View buttonView) {
+
         FragmentTransaction transaction =
                 getSupportFragmentManager().beginTransaction();
 
         HelpPageFragment.setContainerActivity(this);
-        System.out.println("Before transition");
-        transaction.replace(R.id.fragment_container,
-                HelpPageFragment);
+        //System.out.println("Before transition");
+        transaction.replace(R.id.fragment_container, HelpPageFragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+        currentFrag = "HelpFragments";
+        //System.out.println("After transition");
 
+    }
+
+    /**
+     * Set up FavoritPlacesList fragment
+     * @param iv
+     */
+    public void listFavor(View iv){
+        FragmentTransaction transaction =
+                getSupportFragmentManager().beginTransaction();
+
+        FPListFragment = new FavoritPlacesList();
+        FPListFragment.setContainerActivity(this);
+        //System.out.println("Before transition");
+        transaction.replace(R.id.fragment_container, FPListFragment);
         transaction.addToBackStack(null);
         transaction.commit();
 
-        System.out.println("After transition");
-
+        currentFrag = "FavoritPlacesList";
     }
 
     public void updateLocation(View v) {
@@ -121,12 +171,30 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         new DownloadTask().execute(currentCameraPosition.target.latitude + "," + currentCameraPosition.target.longitude);
     }
 
-
+    /**
+     * take the user back to main menu if the user click 'Back To Menu' button
+     * @param button
+     */
     public void backToMenu(View button){
-        HelpPageFragment.backToMenu(button);
+        if(currentFrag.equals("HelpFragments"))
+            HelpPageFragment.backToMenu(button);
+        else if(currentFrag.equals("FavoritPlacesList"))
+            FPListFragment.backToMenu(button);
     }
 
+    public void selectPlace(View tv){
+        FPListFragment.selectPlace(tv);
+    }
 
+    public void DeletePlace(View bv) {
+        FPListFragment.DeletePlace(bv);
+    }
+
+    /**
+     * Update the block of instructions to next or precious one according to the button that user
+     * click
+     * @param bv
+     */
     public void updateBlock(View bv){
         float setPos = 0;
         if(bv.getId()==R.id.next_help_button) {
@@ -186,7 +254,82 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         animatorSet.start();
 
         //img.setAlpha(1.0f);
+    }
 
+    public void updateFavor(View button){
+        Button myFavor= (Button)findViewById(R.id.myFavor_button);
+
+        if(locationName != null){
+            if(!isLike) {
+                if(!Favorlist.contains(locationName))
+                    Favorlist.add(locationName);
+                myFavor.setBackgroundResource(R.drawable.favorite_true);
+            } else {
+                Favorlist.remove(locationName);
+                myFavor.setBackgroundResource(R.drawable.favorite_false);
+            }
+            isLike = !isLike;
+            System.out.println("Favor List: \n" + Favorlist);
+        }
+
+    }
+
+    /**
+     * Create the locations file, only if it doesn't already exist.
+     */
+    private void createLocsFileIfNotExists() {
+        File file = getFileStreamPath(FavorLocsFileName);
+        if (!file.exists()) {
+            // String fileContents = "Wake up\nAttend 317\nAdd tasks\nDo the tasks!\n";
+            String fileContents = "Reilly Craft Pizza and Drink\nSky Bar Tucson";
+            FileOutputStream outputStream;
+            try {
+                outputStream = openFileOutput(FavorLocsFileName,MODE_PRIVATE);
+                outputStream.write(fileContents.getBytes());
+                outputStream.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Read the tasks from the task file.
+     */
+    private void populateFavors() {
+        Context context = getApplicationContext();
+        try {
+            FileInputStream fileInputStream = context.openFileInput(FavorLocsFileName);
+            InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream);
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            String locaName = bufferedReader.readLine();
+            while (locaName != null) {
+                if(!Favorlist.contains(locaName))
+                    Favorlist.add(locaName);
+                locaName = bufferedReader.readLine();
+            }
+            System.out.println("populateFavors: \n" + Favorlist);
+        } catch (Exception e) {
+            System.out.println("Oh Sheisse-Schnitzel, das error ja.");
+        }
+    }
+
+    /**
+     * Save task list to non-volatile memory
+     */
+    private void saveFavorLocationsFile() {
+        File file = getFileStreamPath(FavorLocsFileName);
+        FileOutputStream outputStream;
+        try {
+            outputStream = openFileOutput(FavorLocsFileName, MODE_PRIVATE);
+            for (String FavorlocationName : Favorlist) {
+                outputStream.write((FavorlocationName + "\n").getBytes());
+            }
+            outputStream.flush();
+            outputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private class DownloadTask extends AsyncTask<String, Void, JSONObject> {
@@ -232,6 +375,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                      * Assume that the json variable will be a JSONObject populates with results from a places search.
                      * You should put a Marker on the map for each resulting location, with a corresponding label.
                      */
+                    if(i == 0){
+                        locationName = results.getJSONObject(i).getString("name");
+                        isLike = Favorlist.contains(locationName);
+                        Button myFavor= (Button)findViewById(R.id.myFavor_button);
+                        if(isLike)
+                            myFavor.setBackgroundResource(R.drawable.favorite_true);
+                        else
+                            myFavor.setBackgroundResource(R.drawable.favorite_false);
+                    }
                     JSONObject loc = results.getJSONObject(i).getJSONObject("geometry")
                             .getJSONObject("location");
                     double lat = loc.getDouble("lat");
@@ -248,9 +400,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
         }
-
      }
 
 }

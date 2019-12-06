@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".FavoritPlacesList"
+    android:background="@drawable/times_square"
+    android:id="@+id/FPList_FramLayout">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:id="@+id/fragment_help_outer_layout1"
+        android:background="#ddffffff">
+
+        <Button
+            android:layout_width="200dp"
+            android:layout_height="50dp"
+            android:layout_margin="5dp"
+            android:layout_gravity="right"
+            android:background="@drawable/rounded_button3"
+            android:text="@string/Back_menu_button_text"
+            android:textColor="@color/textColor2"
+            android:textSize="20dp"
+            android:id="@+id/backToMenu_button_2"
+            android:onClick="backToMenu"></Button>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="casual"
+            android:text="Favorite places"
+            android:textAlignment="center"
+            android:textColor="@color/titleColor"
+            android:textSize="50dp"
+            android:textStyle="bold" />
+        />
+
+        <ListView
+            android:id="@+id/list_favorite_places"
+            android:paddingHorizontal="15dp"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:orientation="horizontal"
+            android:layout_margin="15px"
+            android:textColor="@color/textColor2"
+            android:textSize="20dp"
+            android:background="@color/backgroundColor">
+        </ListView>
+
+        <Button
+            android:layout_width="150dp"
+            android:layout_height="55dp"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/rounded_button3"
+            android:text="Delete"
+            android:textColor="@color/textColor2"
+            android:textSize="30dp"
+            android:id="@+id/rm_place_button"
+            android:onClick="DeletePlace"></Button>
+
+        </LinearLayout>
+
+</FrameLayout>
+
