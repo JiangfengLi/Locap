@@ -97,6 +97,7 @@
                 android:layout_height="90dp"
                 android:layout_margin="5dp"
                 android:layout_weight="1"
+                android:onClick="shareContacts"
                 android:background="@drawable/new_blue_share_icon"
                 android:textSize="30dp"
                 android:id="@+id/share_button"></Button>

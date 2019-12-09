@@ -13,8 +13,8 @@
         android:layout_width="match_parent"
         android:layout_height="70dp"
         android:textSize="20dp"
-        android:id="@+id/location_name"
-        android:onClick="selectPlace" />
+        android:textColor="@color/textColor"
+        android:id="@+id/location_name_row" />
 
 
 </LinearLayout>

@@ -58,7 +58,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final int PATTERN_DASH_LENGTH_PX = 20;
     private static final int PATTERN_GAP_LENGTH_PX = 20;
     private String FavorLocsFileName = "FavorLocs_file.txt";
-
+    private String shareAdress = "";
     private static final PatternItem DASH = new Dash(PATTERN_DASH_LENGTH_PX);
     private static final PatternItem GAP = new Gap(PATTERN_GAP_LENGTH_PX);
 
@@ -151,6 +151,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         FPListFragment = new FavoritePlacesList();
         FPListFragment.setContainerActivity(this);
+        FPListFragment.setFavorlist(Favorlist);
         //System.out.println("Before transition");
         transaction.replace(R.id.fragment_container, FPListFragment);
         transaction.addToBackStack(null);
@@ -177,7 +178,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void selectPlace(View tv){
-        FPListFragment.selectPlace(tv);
+        FPListFragment.selectPlace((TextView) tv);
     }
 
     public void DeletePlace(View bv) {
@@ -266,6 +267,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             System.out.println("Favor List: \n" + Favorlist);
         }
 
+    }
+
+    public void shareContacts(View bv){
+        FragmentTransaction transaction =
+                getSupportFragmentManager().beginTransaction();
+
+        ContactsFragment contactsFragment = new ContactsFragment();
+        contactsFragment.setContainerActivity(this);
+        contactsFragment.setShareLocation(shareAdress);
+        //System.out.println("Before transition");
+        transaction.replace(R.id.fragment_container, contactsFragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 
     /**
@@ -371,6 +385,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                      */
                     if(i == 0){
                         locationName = results.getJSONObject(i).getString("name");
+                        shareAdress = results.getJSONObject(i).getString("vicinity");
                         isLike = Favorlist.contains(locationName);
                         Button myFavor= (Button)findViewById(R.id.myFavor_button);
                         if(isLike)
